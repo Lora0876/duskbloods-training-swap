@@ -19,9 +19,11 @@ oo2core_9_win64.dll 怎么找（按优先级）：
 """
 import ctypes
 import os
+import re
 import shutil
 import struct
 import sys
+import time
 from pathlib import Path
 
 DCX_DATA = 0x4C
@@ -90,6 +92,110 @@ def set_oo2core(path):
     global OO2CORE
     OO2CORE = p
     return p
+
+
+# ---------------------------------------------------------------------------------------------
+# 自动搜索：Steam 库 / 常见游戏目录 / 用户下载目录
+# ---------------------------------------------------------------------------------------------
+# 命中这些名字的目录优先（FromSoftware 的游戏最可能带 oo2core）
+_FROM_SOFT_HINTS = ('ELDEN', 'NIGHTREIGN', 'DARK SOULS', 'ARMORED CORE', 'DUSKBLOODS')
+_SKIP_DIRS = {'windows', 'winsxs', 'temp', '$recycle.bin', 'node_modules', '.git',
+              'system32', 'syswow64', 'installer', 'assembly'}
+
+
+def _steam_libraries():
+    """从注册表 + libraryfolders.vdf 找出所有 Steam 库目录。"""
+    steam_dirs = []
+    try:
+        import winreg
+        for hive, key in ((winreg.HKEY_CURRENT_USER, r'Software\Valve\Steam'),
+                          (winreg.HKEY_LOCAL_MACHINE, r'SOFTWARE\WOW6432Node\Valve\Steam'),
+                          (winreg.HKEY_LOCAL_MACHINE, r'SOFTWARE\Valve\Steam')):
+            try:
+                with winreg.OpenKey(hive, key) as handle:
+                    steam_dirs.append(Path(winreg.QueryValueEx(handle, 'SteamPath')[0]))
+            except OSError:
+                continue
+    except Exception:
+        pass
+    for steam in list(steam_dirs):
+        vdf = steam / 'steamapps' / 'libraryfolders.vdf'
+        if not vdf.is_file():
+            continue
+        try:
+            text = vdf.read_text(encoding='utf-8', errors='ignore')
+        except OSError:
+            continue
+        for match in re.finditer(r'"path"\s+"([^"]+)"', text):
+            steam_dirs.append(Path(match.group(1).replace('\\\\', '\\')))
+    return [p for p in steam_dirs if p.is_dir()]
+
+
+def _search_roots():
+    """返回 [(目录, 最大深度)]，越靠前越可能是游戏目录。"""
+    roots = []
+    for steam in _steam_libraries():
+        roots.append((steam / 'steamapps' / 'common', 4))
+    for env in ('ProgramFiles(x86)', 'ProgramFiles'):
+        base = os.environ.get(env)
+        if not base:
+            continue
+        roots += [(Path(base) / 'Steam' / 'steamapps' / 'common', 4),
+                  (Path(base) / 'Epic Games', 4),
+                  (Path(base) / 'XboxGames', 4)]
+    if os.environ.get('ProgramData'):
+        roots.append((Path(os.environ['ProgramData']) / 'XboxGames', 4))
+    for drive in 'CDEFGH':
+        base = Path(drive + ':/')
+        if not base.is_dir():
+            continue
+        roots += [(base / 'SteamLibrary' / 'steamapps' / 'common', 4),
+                  (base / 'Games', 4),
+                  (base / 'XboxGames', 4),
+                  (base / 'Program Files' / 'Steam' / 'steamapps' / 'common', 4)]
+    # 用户自己的下载/桌面兜底（用户常把 DLL 丢在这里），深度放小一点
+    home = Path.home()
+    roots += [(home / 'Downloads', 3), (home / 'Desktop', 2)]
+    return [(p, d) for p, d in roots if p.is_dir()]
+
+
+def auto_find_oo2core(budget_s=12.0):
+    """尽量自己找到 oo2core_9_win64.dll；找到就记住并返回路径，找不到返回 None。
+
+    只用有限的搜索范围 + 时间预算，避免卡住界面（调用方应该放后台线程）。
+    """
+    found = oo2core_path()
+    if found:
+        return found
+    deadline = time.time() + max(1.0, float(budget_s))
+    target = OO2CORE_NAME.lower()
+    fallback = None
+    for root, max_depth in _search_roots():
+        if time.time() >= deadline:
+            break
+        base_depth = len(root.parts)
+        for dirpath, dirnames, filenames in os.walk(str(root), onerror=lambda e: None):
+            if time.time() >= deadline:
+                break
+            dirnames[:] = [d for d in dirnames if d.lower() not in _SKIP_DIRS]
+            if len(Path(dirpath).parts) - base_depth > max_depth:
+                dirnames[:] = []
+                continue
+            lowered = {f.lower() for f in filenames}
+            if target not in lowered:
+                continue
+            candidate = Path(dirpath) / OO2CORE_NAME
+            upper = str(candidate).upper()
+            if any(hint in upper for hint in _FROM_SOFT_HINTS):
+                return set_oo2core(candidate)      # 明显是 FromSoft 游戏，直接用
+            if fallback is None:
+                fallback = candidate              # 先记着，继续找更像的
+    if fallback is not None:
+        try:
+            return set_oo2core(fallback)
+        except Exception:
+            return None
+    return None
 
 
 def _missing_message():

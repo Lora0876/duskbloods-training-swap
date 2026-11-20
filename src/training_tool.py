@@ -14,7 +14,7 @@ from pathlib import Path
 from tkinter import messagebox, ttk
 
 APP_TITLE = '黄昏血族 · 训练场换怪工具'
-TOOL_VERSION = '1.1'
+TOOL_VERSION = '1.2'
 
 # 取自 campaign.theduskbloods.jp 网络测试导览的官方配色
 BG = '#0f0b0b'
@@ -68,6 +68,9 @@ TEXTS = {
                     '请选到包含 DuskbloodsCloud.exe（或 02-启动游戏.cmd、local\\settings.json）的那一层文件夹。'),
         'pkg_none': '（没找到游戏包 —— 点「选择游戏包...」手动指定）',
         'no_pkg_hint': '提示：没找到游戏包。点「选择游戏包...」选到含 DuskbloodsCloud.exe 的那层文件夹。',
+        'oodle_searching': '正在自动搜索 oo2core_9_win64.dll（第一次可能要十几秒）…',
+        'oodle_found': '已自动找到 Oodle 库：{path}',
+        'oodle_find_none': '自动搜索没找到 oo2core_9_win64.dll。点右下角「指定 Oodle...」手动选它（在《艾尔登法环》/《黑夜君临》游戏目录里）。',
         'refresh': '清单已刷新',
         'err_title': '失败',
         'lang_btn': 'EN',
@@ -122,6 +125,10 @@ TEXTS = {
         'pkg_none': '(no game folder found - click "Pick game folder..." to set it)',
         'no_pkg_hint': ('Note: no game folder was found. Click "Pick game folder..." and choose the '
                         'folder with DuskbloodsCloud.exe.'),
+        'oodle_searching': 'Searching for oo2core_9_win64.dll automatically (the first time may take ~10 s)...',
+        'oodle_found': 'Found the Oodle library automatically: {path}',
+        'oodle_find_none': ('Automatic search did not find oo2core_9_win64.dll. Click "Set Oodle..." at the '
+                            'bottom right to pick it (it is in your Elden Ring / Nightreign game folder).'),
         'refresh': 'Catalog reloaded',
         'err_title': 'Error',
         'lang_btn': '中文',
@@ -241,15 +248,45 @@ class App:
 
     # ---------- 语言 ----------
     def _startup_hints(self):
-        """刚打开时把「缺 oo2core」「没找到游戏包」直接打在状态栏，别让用户自己猜。"""
+        """刚打开时：oo2core 找不到就后台自动搜；还是没有再提示手动指定。顺带提示游戏包。"""
+        self._oodle_search_result = 'idle'
+        found = None
         try:
-            if patch_m80.oo2core_path() is None:
-                self.log(self.t('oodle_hint'), 'muted')
-                return
+            found = patch_m80.oo2core_path()
         except Exception:
             pass
+        if found is None:
+            self.log(self.t('oodle_searching'), 'muted')
+            self._oodle_search_result = None      # None = 搜索中
+            import threading
+
+            def worker():
+                try:
+                    self._oodle_search_result = patch_m80.auto_find_oo2core() or ''
+                except Exception:
+                    self._oodle_search_result = ''
+
+            threading.Thread(target=worker, name='oodle-search', daemon=True).start()
+            self.root.after(400, self._poll_oodle_search)
+            return
         if not getattr(self, '_pkgs', None):
             self.log(self.t('no_pkg_hint'), 'muted')
+
+    def _poll_oodle_search(self):
+        """等后台搜索结束（线程只写一个字段，界面线程来读）。"""
+        try:
+            result = getattr(self, '_oodle_search_result', 'idle')
+            if result is None:
+                self.root.after(400, self._poll_oodle_search)
+                return
+            if result:
+                self.log(self.t('oodle_found').format(path=result), 'ok')
+            else:
+                self.log(self.t('oodle_find_none'), 'muted')
+            if not getattr(self, '_pkgs', None):
+                self.root.after(1200, lambda: self.log(self.t('no_pkg_hint'), 'muted'))
+        except Exception:
+            pass
 
     def t(self, key):
         return TEXTS[self.lang][key]

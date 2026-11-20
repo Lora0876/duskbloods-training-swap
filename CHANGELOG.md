@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2 — 2026-11-20
+
+- **自动搜索 oo2core**：打开工具就自己在后台找 `oo2core_9_win64.dll`——先查注册表里的 Steam 库与 `libraryfolders.vdf`，
+  再扫 Epic / Xbox / 各盘 SteamLibrary / Games，最后兜底扫用户的 Downloads、Desktop；命中 FromSoftware 游戏目录优先。
+  找到就自动记住并提示，**不用用户手动选**；找不到才提示手动指定
+- 搜索跑在后台线程（带 12 秒预算），不卡界面
+
 ## 1.1 — 2026-11-20
 
 - **首次打开就提示**：缺 `oo2core_9_win64.dll` 时状态栏直接告诉你怎么补，不用等点「应用」才报错

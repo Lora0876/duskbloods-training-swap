@@ -4,7 +4,7 @@
 > 把「旅程 / 庭院回忆」里的三个训练靶（墓地稻草人、信徒、巨人信徒）换成任意敌人、Boss 或眷属。
 
 <p align="center">
-  <b>1.1</b> · Windows · Python 3.10+ · 中英双语界面
+  <b>1.2</b> · Windows · Python 3.10+ · 中英双语界面
 </p>
 
 <p align="center">
@@ -32,7 +32,7 @@
 
 ## 下载与安装
 
-1. 到 [Releases](../../releases) 下载最新的 `training-swap-tool-1.1-installer.zip`
+1. 到 [Releases](../../releases) 下载最新的 `training-swap-tool-1.2-installer.zip`
 2. 解压，双击里面的 **`一键安装.exe`**
 3. 按提示走完（会自动找 Python、装好文件、建桌面快捷方式）
 
@@ -82,7 +82,8 @@
 ## 常见问题
 
 **「应用」失败，报找不到 `oo2core_9_win64.dll`**
-点工具右下角的 **`指定 Oodle...`** 按钮，选中那个 DLL 即可（会记住）。
+工具**打开时会自己找**（Steam 库、Epic/Xbox 游戏目录、用户下载目录都会扫），找到会在状态栏提示并记住。
+找不到再点右下角 **`指定 Oodle...`** 手动选（会记住）。
 也可以把它复制到工具目录，或设环境变量 `DUSK_OO2CORE` 指向它（文件或目录都行）。
 只换文本/名字不需要它，只有**重新打包 MSB** 才需要。
 
