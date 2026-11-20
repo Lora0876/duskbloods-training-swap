@@ -57,7 +57,12 @@ function Find-Python {
 }
 
 Set-Stage 'Python'
-Say '=== 训练场换怪工具 1.0 · 一键安装 ===' 'Yellow'
+$ver = '?'
+try {
+  $vtext = Get-Content (Join-Path $dir 'training_tool.py') -Raw -Encoding UTF8
+  if ($vtext -match "TOOL_VERSION\s*=\s*'([^']+)'") { $ver = $Matches[1] }
+} catch {}
+Say "=== 训练场换怪工具 $ver · 一键安装 ===" 'Yellow'
 Say "  安装目录: $dir"
 
 $python = Find-Python
@@ -119,8 +124,7 @@ if ($cloud) {
 }
 
 # ---------------------------------------------------------------- 快捷方式（只有一个）
-$shortcutName = if ((Split-Path $dir -Leaf) -eq 'DuskTrainingTool') { '训练场换怪工具.lnk' }
-                else { '训练场换怪工具-1.0.lnk' }
+$shortcutName = '训练场换怪工具.lnk'
 if ($python -and -not $Test) {
   Set-Stage '创建快捷方式'
   $sh = New-Object -ComObject WScript.Shell
@@ -129,7 +133,7 @@ if ($python -and -not $Test) {
   $lnk.Arguments = '"' + (Join-Path $dir 'training_tool.py') + '"'
   $lnk.WorkingDirectory = $dir
   $lnk.IconLocation = "$python,0"
-  $lnk.Description = '训练场换怪工具 1.0'
+  $lnk.Description = "训练场换怪工具 $ver"
   $lnk.Save()
   Say "  桌面快捷方式: $shortcutName" 'Green'
 }
@@ -142,12 +146,12 @@ foreach ($rel in @('training_tool.py', 'catalog.json', 'tools\training_build.py'
   if (-not (Test-Path (Join-Path $dir $rel))) { throw "缺少 $rel" }
 }
 $tool = Get-Content -LiteralPath (Join-Path $dir 'training_tool.py') -Raw -Encoding UTF8
-if ($tool -notmatch "TOOL_VERSION = '1\.0'") { Say '  注意：装的不是 1.0' 'Yellow' }
+if ($tool -notmatch "TOOL_VERSION = '1\.") { Say '  注意：版本号不是 1.x' 'Yellow' }
 if ($tool -match '_lock_panel') { throw '安装包版本不对：文件里含有不该出现的功能代码' }
 if (-not (Test-Path (Join-Path $dir 'oo2core_9_win64.dll'))) { Say '  注意：缺少 oo2core_9_win64.dll（改怪会失败）' 'Yellow' }
 Say '  自检通过' 'Green'
 
-$done = "安装完成！`n`n  · 版本：1.0`n  · 目录：$dir`n  · 快捷方式：桌面「$shortcutName」`n`n" +
+$done = "安装完成！`n`n  · 版本：$ver`n  · 目录：$dir`n  · 快捷方式：桌面「$shortcutName」`n`n" +
         "用法：选三个标靶 → 应用并启动 → 标题按 A → 大厅 Plus → 庭院 → A → 在面板里切标靶。"
 Say $done 'Green'
 if (-not $Test) {

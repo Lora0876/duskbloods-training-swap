@@ -1,4 +1,4 @@
-"""打包「训练场换怪工具 1.0」单文件一键安装包（仓库内直接跑）（沿用以前那种形式：一个 exe + 一个目录 + 一个快捷方式）。
+"""打包「训练场换怪工具」单文件一键安装包（仓库内直接跑，版本号从 src 读）。
 
 来源：本仓库的 src\\（1.0）
 出口：
@@ -7,6 +7,7 @@
 """
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -19,9 +20,8 @@ SRC = ROOT / 'src'                                 # 1.0 的源码
 WORK = ROOT / 'build' / '_work'
 PAYLOAD = WORK / 'payload'
 DIST = ROOT / 'release'
-OUT_EXE = DIST / '训练场换怪工具1.0-一键安装.exe'
-OUT_ZIP = DIST / '训练场换怪工具1.0.zip'
-OUT_SINGLE = DIST / '训练场换怪工具1.0-单文件版.zip'
+OUT_EXE = OUT_ZIP = OUT_SINGLE = None   # 读到版本号后填（见 main）
+VERSION = ''
 CSC = Path(r'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe')
 
 # 单版本：payload 平铺在根上（和以前那个包一致）
@@ -41,13 +41,21 @@ PRESET = None
 
 
 def main() -> int:
+    global OUT_EXE, OUT_ZIP, OUT_SINGLE, VERSION
     if not SRC.is_dir():
-        raise SystemExit('找不到 1.0 源目录: %s' % SRC)
+        raise SystemExit('找不到源码目录: %s' % SRC)
 
-    # 兜底：确认来源确实是 1.0
+    # 版本号从源码读，文件名和文案都跟着它走
     tool = (SRC / 'training_tool.py').read_text(encoding='utf-8')
-    if "TOOL_VERSION = '1.0'" not in tool:
-        raise SystemExit('源目录不是 1.0（TOOL_VERSION 不对）')
+    m = re.search(r"TOOL_VERSION\s*=\s*'([^']+)'", tool)
+    if not m:
+        raise SystemExit('读不到 TOOL_VERSION')
+    VERSION = m.group(1)
+    if not VERSION.startswith('1.'):
+        raise SystemExit('版本号不对劲: ' + VERSION)
+    OUT_EXE = DIST / ('训练场换怪工具%s-一键安装.exe' % VERSION)
+    OUT_ZIP = DIST / ('训练场换怪工具%s.zip' % VERSION)
+    OUT_SINGLE = DIST / ('训练场换怪工具%s-单文件版.zip' % VERSION)
     if '_lock_panel' in tool:
         raise SystemExit('源目录里含有不该出现的功能代码，版本不对，拒绝打包')
 
@@ -90,14 +98,14 @@ def main() -> int:
 
     # 说明（单文件版格式，和老包一致：zip 根上就两个文件）
     readme_text = (
-        '黄昏血族 · 训练场换怪（单文件安装器 · 1.0）\n'
+        '黄昏血族 · 训练场换怪（单文件安装器 · %s）\n' % VERSION +
         '\n'
         '用法：\n'
         '  1. 双击「一键安装.exe」（放在哪都行，桌面上也可以）\n'
         '  2. 它会自己检查 Python，然后把工具装好\n'
         '  3. 装完桌面会多一个快捷方式，双击就能用\n'
         '\n'
-        '版本：1.0\n'
+        '版本：%s\n' % VERSION +
         '\n'
         '前置：\n'
         '  · Python 3.10 以上（带 tkinter）；没装会提示你去 python.org 装 3.12\n'
@@ -120,7 +128,7 @@ def main() -> int:
     readme.write_text(readme_text, encoding='utf-8')
 
     # ---- 单文件版：zip 根上只有 一键安装.exe + 说明.txt（照 dist\单文件版\ 的格式）----
-    single_dir = ROOT / 'release' / '单文件版-1.0'
+    single_dir = ROOT / 'release' / ('单文件版-' + VERSION)
     if single_dir.exists():
         shutil.rmtree(single_dir)
     single_dir.mkdir(parents=True)

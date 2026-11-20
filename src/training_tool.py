@@ -14,7 +14,7 @@ from pathlib import Path
 from tkinter import messagebox, ttk
 
 APP_TITLE = '黄昏血族 · 训练场换怪工具'
-TOOL_VERSION = '1.0'
+TOOL_VERSION = '1.1'
 
 # 取自 campaign.theduskbloods.jp 网络测试导览的官方配色
 BG = '#0f0b0b'
@@ -59,6 +59,15 @@ TEXTS = {
                       '现在指定它吗？\n'
                       '它在你自己的《艾尔登法环》/《黑夜君临》游戏目录里。'),
         'oodle_missing': '没有指定 Oodle 库，改怪不会生效',
+        'oodle_hint': ('提示：没找到 oo2core_9_win64.dll，点「应用」会失败。'
+                       '点右下角「指定 Oodle...」选中它即可（在《艾尔登法环》/《黑夜君临》游戏目录里）。'),
+        'pick_package': '选择游戏包...',
+        'pick_package_title': '选择游戏包文件夹（含 DuskbloodsCloud.exe 或 local\\settings.json 的那一层）',
+        'pkg_ok': '已选择游戏包：{path}',
+        'pkg_bad': ('这个文件夹看起来不是游戏包：\n\n{path}\n\n'
+                    '请选到包含 DuskbloodsCloud.exe（或 02-启动游戏.cmd、local\\settings.json）的那一层文件夹。'),
+        'pkg_none': '（没找到游戏包 —— 点「选择游戏包...」手动指定）',
+        'no_pkg_hint': '提示：没找到游戏包。点「选择游戏包...」选到含 DuskbloodsCloud.exe 的那层文件夹。',
         'refresh': '清单已刷新',
         'err_title': '失败',
         'lang_btn': 'EN',
@@ -101,6 +110,18 @@ TEXTS = {
                       'Pick it now?\n'
                       'It is in your own Elden Ring / Nightreign game folder.'),
         'oodle_missing': 'No Oodle library set; the swap will not work',
+        'oodle_hint': ('Note: oo2core_9_win64.dll was not found, so "Apply" will fail. '
+                       'Click "Set Oodle..." at the bottom right and pick it (it is in your '
+                       'Elden Ring / Nightreign game folder).'),
+        'pick_package': 'Pick game folder...',
+        'pick_package_title': 'Pick the game folder (the one with DuskbloodsCloud.exe or local\\settings.json)',
+        'pkg_ok': 'Game folder set: {path}',
+        'pkg_bad': ('That folder does not look like a game package:\n\n{path}\n\n'
+                    'Pick the folder that contains DuskbloodsCloud.exe (or 02-启动游戏.cmd, '
+                    'or local\\settings.json).'),
+        'pkg_none': '(no game folder found - click "Pick game folder..." to set it)',
+        'no_pkg_hint': ('Note: no game folder was found. Click "Pick game folder..." and choose the '
+                        'folder with DuskbloodsCloud.exe.'),
         'refresh': 'Catalog reloaded',
         'err_title': 'Error',
         'lang_btn': '中文',
@@ -216,8 +237,20 @@ class App:
         self.w_status = tk.Label(root, text=self.t('ready'), bg=BG, fg=MUTED,
                                  font=(FONT_FAMILY, 9), anchor='w')
         self.w_status.pack(fill='x', padx=18, pady=(0, 10))
+        self._startup_hints()
 
     # ---------- 语言 ----------
+    def _startup_hints(self):
+        """刚打开时把「缺 oo2core」「没找到游戏包」直接打在状态栏，别让用户自己猜。"""
+        try:
+            if patch_m80.oo2core_path() is None:
+                self.log(self.t('oodle_hint'), 'muted')
+                return
+        except Exception:
+            pass
+        if not getattr(self, '_pkgs', None):
+            self.log(self.t('no_pkg_hint'), 'muted')
+
     def t(self, key):
         return TEXTS[self.lang][key]
 
@@ -233,6 +266,8 @@ class App:
         # 游戏版本行
         self.w_build_lbl.configure(text=self.t('game_build'))
         self.w_rescan.configure(text=self.t('rescan'))
+        if hasattr(self, 'w_pick_pkg'):
+            self.w_pick_pkg.configure(text=self.t('pick_package'))
         self.root.title(self.t('win_title'))
         self.b_launch.configure(text=self.t('apply_launch'))
         self.b_apply.configure(text=self.t('apply'))
@@ -311,6 +346,11 @@ class App:
                                   activeforeground=GOLD, font=(FONT_FAMILY, 9), padx=10, pady=1,
                                   cursor='hand2')
         self.w_rescan.pack(side='left')
+        self.w_pick_pkg = tk.Button(row, text=self.t('pick_package'), command=self.pick_package,
+                                    bd=0, bg=CARD, fg=GOLD, activebackground=LINE,
+                                    activeforeground=GOLD, font=(FONT_FAMILY, 9), padx=10, pady=1,
+                                    cursor='hand2')
+        self.w_pick_pkg.pack(side='left', padx=(6, 0))
         self._fill_versions()
 
     def _fill_versions(self):
@@ -327,6 +367,8 @@ class App:
         elif labels:
             self.version_box.set(labels[0])
             paths.set_current(self._pkgs[0][1])
+        else:
+            self.version_box.set(self.t('pkg_none'))
 
     def _on_version(self):
         sel = self.version_var.get()
@@ -336,6 +378,49 @@ class App:
                 self.log(self.t('build_selected').format(name=lb), 'ok')
                 self.log(f'  {p}', 'muted')
                 return
+
+    @staticmethod
+    def _looks_like_package(folder):
+        """判断一个目录像不像游戏包：有 local/settings.json（且 main 存在），或带启动脚本。"""
+        import json
+        d = Path(folder)
+        if not d.is_dir():
+            return False
+        settings = d / 'local' / 'settings.json'
+        if settings.is_file():
+            try:
+                cfg = json.loads(settings.read_text(encoding='utf-8'))
+                main = cfg.get('main')
+                if main and Path(main).is_file():
+                    return True
+            except Exception:
+                pass
+        for name in ('DuskbloodsCloud.exe', 'DuskbloodsSolo.exe',
+                     '02-启动游戏.cmd', '02-单人模式.cmd'):
+            if (d / name).is_file():
+                return True
+        return False
+
+    def pick_package(self):
+        """让用户自己指定游戏包目录；合法就写进 config.json 并刷新下拉。"""
+        from tkinter import filedialog
+        folder = filedialog.askdirectory(title=self.t('pick_package_title'))
+        if not folder:
+            return False
+        folder = str(Path(folder))
+        if not self._looks_like_package(folder):
+            messagebox.showwarning(self.t('err_title'),
+                                   self.t('pkg_bad').format(path=folder))
+            return False
+        try:
+            paths.set_current(folder)
+        except Exception as error:
+            messagebox.showerror(self.t('err_title'), str(error))
+            return False
+        paths._PKGS = None
+        self._fill_versions()
+        self.log(self.t('pkg_ok').format(path=folder), 'ok')
+        return True
 
     def _rescan_versions(self):
         paths._PKGS = None
