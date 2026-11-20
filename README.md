@@ -9,7 +9,7 @@
 
 <p align="center">
   <img src="docs/screenshot.png" alt="中文界面" width="372">
-  <img src="docs/screenshot-en.png" alt="English UI" width="372">
+  <img src="docs/ui-en.png" alt="English UI" width="372">
   <br>
   <sub>中文界面 / English UI —— 右上角一键切换</sub>
 </p>
