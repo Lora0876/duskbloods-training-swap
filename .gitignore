@@ -33,3 +33,5 @@ build/_work/
 release/*.exe
 release/单文件版-1.0/
 release/*.zip
+oo2core.path
+release/单文件版-*/

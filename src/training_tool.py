@@ -14,7 +14,7 @@ from pathlib import Path
 from tkinter import messagebox, ttk
 
 APP_TITLE = '黄昏血族 · 训练场换怪工具'
-TOOL_VERSION = '1.2'
+TOOL_VERSION = '1.3'
 
 # 取自 campaign.theduskbloods.jp 网络测试导览的官方配色
 BG = '#0f0b0b'
@@ -61,6 +61,8 @@ TEXTS = {
         'oodle_missing': '没有指定 Oodle 库，改怪不会生效',
         'oodle_hint': ('提示：没找到 oo2core_9_win64.dll，点「应用」会失败。'
                        '点右下角「指定 Oodle...」选中它即可（在《艾尔登法环》/《黑夜君临》游戏目录里）。'),
+        'model': '角色',
+        'variant': '变体',
         'pick_package': '选择游戏包...',
         'pick_package_title': '选择游戏包文件夹（含 DuskbloodsCloud.exe 或 local\\settings.json 的那一层）',
         'pkg_ok': '已选择游戏包：{path}',
@@ -116,6 +118,8 @@ TEXTS = {
         'oodle_hint': ('Note: oo2core_9_win64.dll was not found, so "Apply" will fail. '
                        'Click "Set Oodle..." at the bottom right and pick it (it is in your '
                        'Elden Ring / Nightreign game folder).'),
+        'model': 'Model',
+        'variant': 'Variant',
         'pick_package': 'Pick game folder...',
         'pick_package_title': 'Pick the game folder (the one with DuskbloodsCloud.exe or local\\settings.json)',
         'pkg_ok': 'Game folder set: {path}',
@@ -227,7 +231,7 @@ class App:
             root.tk.call('tk', 'scaling', self.scale * 1.3333)
         except Exception:
             pass
-        root.geometry(f'{int(760 * self.scale)}x{int(404 * self.scale)}')
+        root.geometry(f'{int(760 * self.scale)}x{int(430 * self.scale)}')
         root.configure(bg=BG)
         root.resizable(False, False)
 
@@ -305,6 +309,9 @@ class App:
         self.w_rescan.configure(text=self.t('rescan'))
         if hasattr(self, 'w_pick_pkg'):
             self.w_pick_pkg.configure(text=self.t('pick_package'))
+        if hasattr(self, 'w_variant_head'):
+            self.w_model_head.configure(text=self.t('model'))
+            self.w_variant_head.configure(text=self.t('variant'))
         self.root.title(self.t('win_title'))
         self.b_launch.configure(text=self.t('apply_launch'))
         self.b_apply.configure(text=self.t('apply'))
@@ -500,16 +507,23 @@ class App:
         grid.pack(fill='x', padx=18, pady=(0, 4), ipady=8)
         grid.columnconfigure(1, weight=1)
         self.w_row_labels = []
+        # 表头：说明右边两列分别是什么
+        self.w_model_head = tk.Label(grid, text=self.t('model'), bg=CARD, fg=MUTED,
+                                     font=(FONT_FAMILY, 8), anchor='w')
+        self.w_model_head.grid(row=0, column=1, padx=(4, 6), pady=(6, 0), sticky='w')
+        self.w_variant_head = tk.Label(grid, text=self.t('variant'), bg=CARD, fg=MUTED,
+                                       font=(FONT_FAMILY, 8), anchor='w')
+        self.w_variant_head.grid(row=0, column=2, padx=(0, 14), pady=(6, 0), sticky='w')
         for i, (title, slot, parts) in enumerate(TARGETS):
             lbl = tk.Label(grid, text=self.t('rows')[i], bg=CARD, fg=TEXT,
                            font=(FONT_FAMILY, FONT_SIZE, 'bold'), width=12, anchor='w')
-            lbl.grid(row=i, column=0, padx=(14, 4), pady=7, sticky='w')
+            lbl.grid(row=i + 1, column=0, padx=(14, 4), pady=7, sticky='w')
             self.w_row_labels.append(lbl)
             m = ttk.Combobox(grid, values=self.labels, width=40, state='readonly')
-            m.grid(row=i, column=1, padx=(4, 6), pady=7, sticky='ew')
+            m.grid(row=i + 1, column=1, padx=(4, 6), pady=7, sticky='ew')
             v = ttk.Combobox(grid, values=[self.t('variant_default')], width=22,
                              state='readonly')
-            v.grid(row=i, column=2, padx=(0, 14), pady=7, sticky='w')
+            v.grid(row=i + 1, column=2, padx=(0, 14), pady=7, sticky='w')
             v.set(self.t('variant_default'))
             default = {'scarecrow': 'c6000', 'adherents': 'c2110', 'giant': 'c2140'}[title]
             m.set(next((lb for lb in self.labels if lb.startswith(default)), self.labels[0]))
