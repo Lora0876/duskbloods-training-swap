@@ -7,6 +7,10 @@
   <b>1.0</b> · Windows · Python 3.10+ · 中英双语界面
 </p>
 
+<p align="center">
+  <img src="docs/screenshot.png" alt="界面截图" width="760">
+</p>
+
 ---
 
 ## 这个工具做什么
