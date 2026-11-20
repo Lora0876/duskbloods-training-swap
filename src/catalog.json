@@ -1,0 +1,498 @@
+[
+ {
+  "model": "c2000",
+  "name": "信徒",
+  "name_en": "Adherent",
+  "kind": "enemy",
+  "variants": [
+   {
+    "name": "白袍火把",
+    "params": {
+     "a": "0x1312d00",
+     "b": "0x1312d00",
+     "d": "0x904"
+    },
+    "name_en": "White robe, torch"
+   },
+   {
+    "name": "白袍火把铃铛",
+    "params": {
+     "a": "0x1312d01",
+     "b": "0x1312d01",
+     "d": "0x904"
+    },
+    "name_en": "White robe, torch & bell"
+   },
+   {
+    "name": "常服火把",
+    "params": {
+     "a": "0x1312d0a",
+     "b": "0x1312d0a",
+     "d": "0x904"
+    },
+    "name_en": "Plain garb, torch"
+   },
+   {
+    "name": "常服火把铃铛",
+    "params": {
+     "a": "0x1312d0b",
+     "b": "0x1312d0b",
+     "d": "0x904"
+    },
+    "name_en": "Plain garb, torch & bell"
+   },
+   {
+    "name": "白袍",
+    "params": {
+     "a": "0x1312d64",
+     "b": "0x1312d64",
+     "d": "0x904"
+    },
+    "name_en": "White robe"
+   },
+   {
+    "name": "常服",
+    "params": {
+     "a": "0x1312d6e",
+     "b": "0x1312d6e",
+     "d": "0x904"
+    },
+    "name_en": "Plain garb"
+   },
+   {
+    "name": "白袍单火把",
+    "params": {
+     "a": "0x1312dc8",
+     "b": "0x1312dc8",
+     "d": "0x904"
+    },
+    "name_en": "White robe, one torch"
+   },
+   {
+    "name": "常服单火把",
+    "params": {
+     "a": "0x1312dc9",
+     "b": "0x1312dc9",
+     "d": "0x904"
+    },
+    "name_en": "Plain garb, one torch"
+   }
+  ]
+ },
+ {
+  "model": "c2010",
+  "name": "巨人信徒",
+  "name_en": "Giant adherent",
+  "kind": "enemy",
+  "variants": [
+   {
+    "name": "白袍",
+    "params": {
+     "a": "0x132b3a0",
+     "b": "0x132b3a0",
+     "d": "0x904"
+    },
+    "name_en": "White robe"
+   },
+   {
+    "name": "红眼",
+    "params": {
+     "a": "0x132b404",
+     "b": "0x132b404",
+     "d": "0x904"
+    },
+    "name_en": "Red eyes"
+   },
+   {
+    "name": "大炮",
+    "params": {
+     "a": "0x132b468",
+     "b": "0x132b468",
+     "d": "0x904"
+    },
+    "name_en": "Cannon"
+   },
+   {
+    "name": "红眼大炮",
+    "params": {
+     "a": "0x132b850",
+     "b": "0x132b850",
+     "d": "0x904"
+    },
+    "note": "有模型但不会动（待查）",
+    "name_en": "Red eyes + cannon"
+   },
+   {
+    "name": "血量更低",
+    "params": {
+     "a": "0x132c728",
+     "b": "0x132c728",
+     "d": "0x904"
+    },
+    "name_en": "Lower HP"
+   },
+   {
+    "name": "无变化",
+    "params": {
+     "a": "0x132c731",
+     "b": "0x132c731",
+     "d": "0x904"
+    },
+    "note": "无变化/不动（待查）",
+    "name_en": "Unchanged"
+   }
+  ]
+ },
+ {
+  "model": "c2040",
+  "name": "黑豹",
+  "name_en": "Dark Leopard",
+  "params": {
+   "a": "0x1374780",
+   "b": "0x1375ef0",
+   "d": "0xffffffff"
+  },
+  "kind": "enemy"
+ },
+ {
+  "model": "c2050",
+  "name": "章鱼",
+  "name_en": "Octopus",
+  "params": {
+   "a": "0x138ce20",
+   "b": "0x138ce21",
+   "d": "0x904"
+  },
+  "kind": "enemy"
+ },
+ {
+  "model": "c2070",
+  "name": "兽化者",
+  "name_en": "Beastridden",
+  "kind": "enemy",
+  "variants": [
+   {
+    "name": "兽化者",
+    "params": {
+     "a": "0x13bdb60",
+     "b": "0x13bdb60",
+     "d": "0xffffffff"
+    },
+    "name_en": "Beastridden"
+   },
+   {
+    "name": "兽化者（毒）",
+    "params": {
+     "a": "0x13bdbc4",
+     "b": "0x13bdbc4",
+     "d": "0xffffffff"
+    },
+    "name_en": "Beastridden (poison)"
+   }
+  ]
+ },
+ {
+  "model": "c2071",
+  "name": "巨人兽化者",
+  "name_en": "Giant Beastridden",
+  "params": {
+   "a": "0x13c0270",
+   "b": "0x13c0270",
+   "d": "0xffffffff"
+  },
+  "kind": "enemy"
+ },
+ {
+  "model": "c2080",
+  "name": "沼泽贵妇",
+  "name_en": "Lady of the Bog",
+  "params": {
+   "a": "0x13d6232",
+   "b": "0x13d6200",
+   "d": "0x904"
+  },
+  "kind": "enemy"
+ },
+ {
+  "model": "c2081",
+  "name": "沼泽贵妇：拉娜",
+  "name_en": "Rana, Lady of the Bog",
+  "params": {
+   "a": "0x13d8942",
+   "b": "0x13d8910",
+   "d": "0xffffffff"
+  },
+  "kind": "enemy"
+ },
+ {
+  "model": "c2100",
+  "name": "米尔修萨骑兵·剑/薙刀",
+  "kind": "enemy",
+  "variants": [
+   {
+    "name": "米尔修萨骑兵（剑）",
+    "params": {
+     "a": "0x1406f40",
+     "b": "0x1406f40",
+     "d": "0xffffffff"
+    },
+    "name_en": "Milhüsa Cavalry (sword)"
+   },
+   {
+    "name": "米尔修萨骑兵（薙刀）",
+    "params": {
+     "a": "0x1406fa4",
+     "b": "0x1406fa4",
+     "d": "0xffffffff"
+    },
+    "name_en": "Milhüsa Cavalry (naginata)"
+   }
+  ],
+  "name_en": "Milhüsa Cavalry"
+ },
+ {
+  "model": "c2101",
+  "name": "米尔修萨骑兵·薙刀",
+  "name_en": "Milhüsa Cavalry (II)",
+  "params": {
+   "a": "0x1409650",
+   "b": "0x1409650",
+   "d": "0x904"
+  },
+  "kind": "enemy"
+ },
+ {
+  "model": "c2103",
+  "name": "米尔修萨骑兵·魔术/暗黑",
+  "kind": "enemy",
+  "variants": [
+   {
+    "name": "魔术师",
+    "params": {
+     "a": "0x140e470",
+     "b": "0x140e470",
+     "d": "0xffffffff"
+    },
+    "name_en": "Sorcerer"
+   },
+   {
+    "name": "暗黑",
+    "params": {
+     "a": "0x1409650",
+     "b": "0x1409650",
+     "d": "0xffffffff"
+    },
+    "name_en": "Dark"
+   }
+  ],
+  "name_en": "Milhüsa Cavalry (III)"
+ },
+ {
+  "model": "c2110",
+  "name": "狗",
+  "name_en": "Hound",
+  "params": {
+   "a": "0x141f5e0",
+   "b": "0x141f5e0",
+   "d": "0x904"
+  },
+  "kind": "enemy"
+ },
+ {
+  "model": "c2120",
+  "name": "大老鼠",
+  "name_en": "Rat",
+  "params": {
+   "a": "0x1437c80",
+   "b": "0x1437c80",
+   "d": "0xffffffff"
+  },
+  "kind": "enemy"
+ },
+ {
+  "model": "c2121",
+  "name": "毒老鼠",
+  "name_en": "Poison Rat",
+  "params": {
+   "a": "0x143a390",
+   "b": "0x143a390",
+   "d": "0xffffffff"
+  },
+  "kind": "enemy"
+ },
+ {
+  "model": "c2130",
+  "name": "血袋虫",
+  "name_en": "Blood Sac",
+  "kind": "enemy",
+  "variants": [
+   {
+    "name": "正常",
+    "params": {
+     "a": "0x1450320",
+     "b": "0x1450320",
+     "d": "0x904"
+    },
+    "name_en": "Normal"
+   },
+   {
+    "name": "不动",
+    "params": {
+     "a": "0x1450321",
+     "b": "0x1450321",
+     "d": "0x904"
+    },
+    "note": "不动（待查）",
+    "name_en": "Stationary"
+   }
+  ]
+ },
+ {
+  "model": "c2140",
+  "name": "狂血鬼",
+  "name_en": "Vampyr",
+  "params": {
+   "a": "0x14689c0",
+   "b": "0x14689c0",
+   "d": "0x904"
+  },
+  "kind": "enemy"
+ },
+ {
+  "model": "c2210",
+  "name": "稻草人",
+  "name_en": "Graveyard Scarecrow",
+  "params": {
+   "a": "0x1513820",
+   "b": "0x1513820",
+   "d": "0xffffffff"
+  },
+  "kind": "enemy"
+ },
+ {
+  "model": "c6000",
+  "name": "尼柯",
+  "name_en": "Nikke (Sickle)",
+  "kind": "enemy",
+  "variants": [
+   {
+    "name": "尼柯（镰刀）",
+    "params": {
+     "a": "0x3938700",
+     "b": "0x3938700",
+     "d": "0x904"
+    },
+    "name_en": "Nikke (sickle)"
+   },
+   {
+    "name": "尼柯（车轮）",
+    "params": {
+     "a": "0x3938764",
+     "b": "0x3938764",
+     "d": "0x904"
+    },
+    "name_en": "Nikke (wheel)"
+   }
+  ]
+ },
+ {
+  "model": "c8010",
+  "name": "防火鼠",
+  "name_en": "Fire Rat",
+  "params": {
+   "a": "0x1437c80",
+   "b": "0x1437c80",
+   "d": "0xffffffff"
+  },
+  "kind": "enemy",
+  "note": "网测无自身参数行，借用 c2120 大老鼠"
+ },
+ {
+  "model": "c6010",
+  "name": "魔术师阿维斯塔",
+  "name_en": "Thaumaturge Avester",
+  "params": {
+   "a": "0x3950da0",
+   "b": "0x3950da0",
+   "d": "0x904"
+  },
+  "kind": "companion"
+ },
+ {
+  "model": "c6020",
+  "name": "枪手碧翠丝",
+  "name_en": "Gunslinger Beatrice",
+  "params": {
+   "a": "0x3969440",
+   "b": "0x3969440",
+   "d": "0x904"
+  },
+  "kind": "companion"
+ },
+ {
+  "model": "c6030",
+  "name": "男歌手",
+  "name_en": "Baritone",
+  "params": {
+   "a": "0x3981ae0",
+   "b": "0x3981ae0",
+   "d": "0x904"
+  },
+  "kind": "companion"
+ },
+ {
+  "model": "c6040",
+  "name": "不死之身马洛",
+  "name_en": "Undead Marlowe",
+  "params": {
+   "a": "0x399a180",
+   "b": "0x399a180",
+   "d": "0x904"
+  },
+  "kind": "companion"
+ },
+ {
+  "model": "c6070",
+  "name": "柊之姐妹：尼雅",
+  "name_en": "Nia, Sister of the Briar",
+  "params": {
+   "a": "0x39e3560",
+   "b": "0x39e3560",
+   "d": "0x904"
+  },
+  "kind": "companion"
+ },
+ {
+  "model": "c6090",
+  "name": "昏君瓦伦提乌斯",
+  "name_en": "Valentius the Unwise",
+  "params": {
+   "a": "0x3a142a0",
+   "b": "0x3a142a0",
+   "d": "0x904"
+  },
+  "kind": "companion"
+ },
+ {
+  "model": "c6100",
+  "name": "莫斯的黑狼",
+  "name_en": "Black Wulf of Mors",
+  "params": {
+   "a": "0x3a2c940",
+   "b": "0x3a2c940",
+   "d": "0x904"
+  },
+  "kind": "companion"
+ },
+ {
+  "model": "c6130",
+  "name": "加戈伊尔",
+  "name_en": "Gargoyle",
+  "params": {
+   "a": "0x3a75d20",
+   "b": "0x3a75d20",
+   "d": "0x904"
+  },
+  "kind": "companion"
+ }
+]

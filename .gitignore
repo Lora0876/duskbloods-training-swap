@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# 工具运行时产物
+out/
+snapshots/
+runs/
+patch/
+install.log
+config.local.json
+
+# 不要提交的东西（版权原因）
+oo2core_9_win64.dll
+*.msb.dcx
+*.dcx
+*.nup
+base/
+romfs/
+prod.keys
+title.keys
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+desktop.ini
+.DS_Store
+# 打包中间产物
+build/_work/
+release/*.exe
+release/单文件版-1.0/
+release/*.zip
