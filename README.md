@@ -32,7 +32,7 @@
 
 ## 下载与安装
 
-1. 到 [Releases](../../releases) 下载最新的 `training-swap-tool-1.4-installer.zip`
+1. 到 [Releases](../../releases) 下载最新的 `training-swap-tool-1.4-installer.exe`
 2. 解压，双击里面的 **`一键安装.exe`**
 3. 按提示走完（会自动找 Python、装好文件、建桌面快捷方式）
 
