@@ -197,10 +197,22 @@ def install(src_dir, prof):
     if not src.exists():
         raise SystemExit('缺构建产物：' + str(src))
     targets = P.get('overlays') or [P['overlay']]
+    failed = []
     for target in targets:
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(src, target)
-    target = targets[0]
+        try:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, target)
+        except Exception as error:
+            failed.append((target, error))
+    if not failed:
+        pass
+    elif len(failed) == len(targets):
+        raise RuntimeError('所有目标都写入失败，请先关闭正在用这些包的游戏。\n'
+                           + '\n'.join(f'  {t}\n    → {e}' for t, e in failed))
+    else:
+        for t, e in failed:
+            print(f'跳过（写入失败）：{t} → {e}')
+    target = next((t for t in targets if t not in {f[0] for f in failed}), targets[0])
     snap = paths.SNAPS / time.strftime('%Y%m%d-%H%M%S')
     snap.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(src, snap / 'm80_00_00_00.msb.dcx')

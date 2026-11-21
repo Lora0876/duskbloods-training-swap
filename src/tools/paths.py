@@ -107,11 +107,17 @@ def profile(_name='cloud'):
     base = detect.game_base(cloud) if cloud else None
     targets = []
     if cloud:
-        # 同时覆盖所有已装过训练场的包（云包 / 单人包），避免装到另一个包导致没效果
+        # 选中的包：总是写（目录不存在就建）
+        for t in detect.overlay_targets(cloud):
+            if t not in targets:
+                targets.append(t)
+        # 其它包：只更新“本来就有训练场覆盖层”的，不擅自给它装新 mod
         for _label, _root in packages():
+            if Path(_root) == Path(cloud):
+                continue
             try:
                 for t in detect.overlay_targets(_root):
-                    if t.parent.exists() and t not in targets:
+                    if t.exists() and t not in targets:
                         targets.append(t)
             except Exception:
                 pass

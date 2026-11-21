@@ -4,7 +4,7 @@
 > 把「旅程 / 庭院回忆」里的三个训练靶（墓地稻草人、信徒、巨人信徒）换成任意敌人、Boss 或眷属。
 
 <p align="center">
-  <b>1.2</b> · Windows · Python 3.10+ · 中英双语界面
+  <b>1.4</b> · Windows · Python 3.10+ · 中英双语界面
 </p>
 
 <p align="center">
@@ -32,7 +32,7 @@
 
 ## 下载与安装
 
-1. 到 [Releases](../../releases) 下载最新的 `training-swap-tool-1.2-installer.zip`
+1. 到 [Releases](../../releases) 下载最新的 `training-swap-tool-1.4-installer.zip`
 2. 解压，双击里面的 **`一键安装.exe`**
 3. 按提示走完（会自动找 Python、装好文件、建桌面快捷方式）
 
